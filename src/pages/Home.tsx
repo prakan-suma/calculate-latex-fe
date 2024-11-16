@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { MdOutlineDeleteSweep } from "react-icons/md";
 import { LuPrinter } from "react-icons/lu";
 
 function Home() {
@@ -9,82 +8,104 @@ function Home() {
     const [percentage, setPercentage] = useState<number>(0);
     const [buyingPrice, setBuyingPrice] = useState<number>(() => {
         const savedPrice = localStorage.getItem('buyingPrice');
-        return savedPrice ? parseInt(savedPrice, 10) : 50; // ค่าเริ่มต้น
+        return savedPrice ? parseFloat(savedPrice) : 50;
     });
 
+    const [netWeight, setNetWeight] = useState<number>(0);
     const [dryRubberWeight, setDryRubberWeight] = useState<number>(0);
     const [totalAmount, setTotalAmount] = useState<number>(0);
+    const [currentDate, setCurrentDate] = useState<string>('');
 
     const printRef = useRef<HTMLDivElement>(null);
+
+    // ฟังก์ชันตัดทศนิยมให้เหลือ 1 ตำแหน่งโดยไม่ปัดเศษ
+    const truncateToOneDecimal = (num: number): number => {
+        const numStr = num.toString();
+        const decimalIndex = numStr.indexOf('.');
+        if (decimalIndex === -1) return num;
+        return parseFloat(numStr.slice(0, decimalIndex + 2));
+    };
 
     // คำนวณยางแห้งและยอดเงินเมื่อมีการเปลี่ยนแปลง
     useEffect(() => {
         if (rubberWeight && tankWeight && percentage && buyingPrice) {
-            const netWeight = rubberWeight - tankWeight;
-            const dryWeight = parseFloat(((netWeight * (percentage / 100)).toFixed(1))); // ใช้ทศนิยมตัวเดียว
-            const amount = dryWeight * buyingPrice;
+            // คำนวณน้ำหนักสุทธิและตัดทศนิยม
+            const calculatedNetWeight = truncateToOneDecimal(rubberWeight - tankWeight);
+            setNetWeight(calculatedNetWeight);
+
+            // คำนวณเปอร์เซ็นต์และตัดทศนิยม
+            const truncatedPercentage = truncateToOneDecimal(percentage);
+
+            // คำนวณยางแห้งและตัดทศนิยม
+            const dryWeight = truncateToOneDecimal(calculatedNetWeight * (truncatedPercentage / 100));
+
+            // ตัดทศนิยมราคารับซื้อ
+            const truncatedPrice = truncateToOneDecimal(buyingPrice);
+
+            // คำนวณยอดเงินและตัดทศนิยม
+            const amount = truncateToOneDecimal(dryWeight * truncatedPrice);
 
             setDryRubberWeight(dryWeight);
             setTotalAmount(amount);
         } else {
+            setNetWeight(0);
             setDryRubberWeight(0);
             setTotalAmount(0);
         }
     }, [rubberWeight, tankWeight, percentage, buyingPrice]);
 
-    // ล้างข้อมูล
-    const clearData = () => {
-        setName('');
-        setRubberWeight(0);
-        setTankWeight(0);
-        setPercentage(0);
-        setDryRubberWeight(0);
-        setTotalAmount(0);
-    };
-
-    // บันทึกราคารับซื้อล่าสุดลง localStorage
     useEffect(() => {
-        localStorage.setItem('buyingPrice', buyingPrice.toString());
-    }, [buyingPrice]);
+        const date = new Date();
+        const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+        setCurrentDate(formattedDate);
+    }, []);
 
-    // ฟังก์ชันสำหรับการพิมพ์
     const handlePrint = () => {
         if (printRef.current) {
-            const printContents = printRef.current.innerHTML;
             const printWindow = window.open('', '_blank');
             if (printWindow) {
-                printWindow.document.open();
                 printWindow.document.write(`
                     <html>
                     <head>
+                        <title>พิมพ์ใบเสร็จ</title>
                         <style>
-                            @media print {
-                                body {
-                                    width: 57mm;
-                                    font-family: Arial, sans-serif;
-                                    font-size: 12px;
-                                }
-                                .receipt {
-                                    width: 100%;
-                                }
-                                .receipt-header {
-                                    text-align: center;
-                                    margin-bottom: 10px;
-                                    border-bottom: 1px dashed #000;
-                                }
-                                .receipt-content {
-                                    margin-bottom: 10px;
-                                }
-                                .receipt-footer {
-                                    text-align: center;
-                                    margin-top: 10px;
-                                    border-top: 1px dashed #000;
-                                }
+                            body {
+                                margin: 0;
+                                padding: 0;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                background-color: #fff;
+                            }
+                            .receipt {
+                                width: 100%; /* ปรับให้เต็มหน้ากระดาษ */
+                                max-width: 500px; /* กำหนดความกว้างสูงสุดของใบเสร็จ */
+                                font-family: Arial, sans-serif;
+                                font-size: 8pt;
+                                line-height: 1.2;
+                                padding: 2px; /* เพิ่ม padding เพื่อไม่ให้ตัวอักษรติดขอบ */
+                                box-sizing: border-box; /* ให้การคำนวณ padding เข้ากับความกว้าง */
+                            }
+                            .receipt-header {
+                                text-align: center;
+                                font-size: 8pt;
+                                font-weight: bold;
+                            }
+                            .receipt-footer {
+                                text-align: center;
+                                font-size: 8pt;
+                            }
+                            .calculation-step {
+                                margin: 5px 0;
+                                border-top: 1px dashed #ccc;
+                                padding-top: 5px;
                             }
                         </style>
                     </head>
-                    <body onload="window.print();window.close()">
-                        ${printContents}
+                    <body onload="window.print(); window.close();">
+                        <div class="receipt">
+                            ${printRef.current.innerHTML}
+                        </div>
                     </body>
                     </html>
                 `);
@@ -93,7 +114,9 @@ function Home() {
         }
     };
 
-    const formatNumber = (num: number) => num.toLocaleString();
+    const formatNumber = (num: number) => {
+        return new Intl.NumberFormat('th-TH').format(num);
+    };
 
     return (
         <>
@@ -141,22 +164,45 @@ function Home() {
                                 onChange={(e) => setPercentage(e.target.value === '' ? 0 : Number(e.target.value))}
                             />
                         </label>
+                        <label className="flex flex-col">
+                            <p>ราคารับซื้อ <span className="text-red-600 font-bold">*</span></p>
+                            <input
+                                className="rounded-md p-2 border-slate-300 border"
+                                placeholder="กรอกราคารับซื้อ"
+                                type="number"
+                                value={buyingPrice === 0 ? '' : buyingPrice}
+                                onChange={(e) => setBuyingPrice(e.target.value === '' ? 0 : Number(e.target.value))}
+                            />
+                        </label>
                     </div>
 
                     <div ref={printRef} className="receipt">
                         <div className="receipt-header">
                             <h4>ใบเสร็จรับเงิน</h4>
+                            <p>วันที่: {currentDate}</p>
                         </div>
                         <div className="receipt-content">
                             <p>ชื่อ: {name}</p>
-                            <p>น้ำหนักยาง: {formatNumber(rubberWeight)} กก.</p>
-                            <p>น้ำหนักถัง: {formatNumber(tankWeight)} กก.</p>
-                            <p>ยางแห้ง: {formatNumber(dryRubberWeight)} กก.</p>
-                            <p>ราคารับซื้อ: {formatNumber(buyingPrice)} บาท</p>
-                            <p>ยอดเงินสุทธิ: {formatNumber(totalAmount)} บาท</p>
+                            <br />
+                            <div className="calculation-step">
+                                <p>น้ำหนักยาง: <span className="number">{formatNumber(rubberWeight)}</span> กก.</p>
+                                <p>น้ำหนักถัง: <span className="number">{formatNumber(tankWeight)}</span> กก.</p>
+                                <p>น้ำหนักสุทธิ: <span className="number">{formatNumber(netWeight)}</span> กก.</p>
+                            </div>
+
+                            <div className="calculation-step">
+                                <p>เปอร์เซ็นต์ยาง: <span className="number">{formatNumber(percentage)}</span> %</p>
+                                <p>ยางแห้ง: <span className="number">{formatNumber(dryRubberWeight)}</span> กก.</p>
+                            </div>
+
+                            <div className="calculation-step">
+                                <p>ราคารับซื้อ: <span className="number">{formatNumber(buyingPrice)}</span> บาท/กก.</p>
+                                <p>ยอดเงินสุทธิ: <span className="number">{formatNumber(totalAmount)}</span> บาท</p>
+                            </div>
                         </div>
+                        <br />
                         <div className="receipt-footer">
-                            <p>ขอบคุณที่ใช้บริการ</p>
+                            <p>ขอบคุณที่ใช้บริการ （〃｀ 3′〃）</p>
                         </div>
                     </div>
                 </div>
