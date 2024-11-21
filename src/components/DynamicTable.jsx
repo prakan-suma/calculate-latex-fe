@@ -27,7 +27,7 @@ function DynamicTable({ cols, rows, loading, type }) {
     };
 
     const getEndpoint = (action) => {
-        const baseUrl = 'http://127.0.0.1:8000';
+        const baseUrl = 'https://suma-latex-be.onrender.com';
         const endpoints = {
             purchase: `${baseUrl}/purchase`,
             sales: `${baseUrl}/sales`,

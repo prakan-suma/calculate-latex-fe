@@ -46,7 +46,7 @@ function CreateSalesBill() {
                 const end = endDate.toISOString().split('T')[0];
 
                 const response = await fetch(
-                    `http://127.0.0.1:8000/total-dry-rubber?start_date=${start}&end_date=${end}`
+                    `https://suma-latex-be.onrender.com/total-dry-rubber?start_date=${start}&end_date=${end}`
                 );
 
                 const data = await response.json();

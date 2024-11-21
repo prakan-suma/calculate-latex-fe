@@ -42,7 +42,7 @@ function CreateExpense() {
         showLoading();
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/expense', {
+            const response = await fetch('https://suma-latex-be.onrender.com/expense', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

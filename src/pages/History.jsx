@@ -126,13 +126,13 @@ function History() {
         let url = '';
         switch (selectedOption) {
             case 'purchase':
-                url = `http://127.0.0.1:8000/purchases?start_date=${startDate.toISOString().split('T')[0]}&end_date=${endDate.toISOString().split('T')[0]}`;
+                url = `https://suma-latex-be.onrender.com/purchases?start_date=${startDate.toISOString().split('T')[0]}&end_date=${endDate.toISOString().split('T')[0]}`;
                 break;
             case 'sales':
-                url = `http://127.0.0.1:8000/sales?start_date=${startDate.toISOString().split('T')[0]}&end_date=${endDate.toISOString().split('T')[0]}`;
+                url = `https://suma-latex-be.onrender.com/sales?start_date=${startDate.toISOString().split('T')[0]}&end_date=${endDate.toISOString().split('T')[0]}`;
                 break;
             case 'expense':
-                url = `http://127.0.0.1:8000/expense?start_date=${startDate.toISOString().split('T')[0]}&end_date=${endDate.toISOString().split('T')[0]}`;
+                url = `https://suma-latex-be.onrender.com/expense?start_date=${startDate.toISOString().split('T')[0]}&end_date=${endDate.toISOString().split('T')[0]}`;
                 break;
             default:
                 return;

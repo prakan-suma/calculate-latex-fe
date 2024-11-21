@@ -34,13 +34,13 @@ const Home = () => {
         try {
             // Fetching data for purchase, sales, and expenses
             const purchaseResponse = await axios.get(
-                `http://127.0.0.1:8000/purchases/total-amount?start_date=${startDate.toISOString()}&end_date=${endDate.toISOString()}`
+                `https://suma-latex-be.onrender.com/purchases/total-amount?start_date=${startDate.toISOString()}&end_date=${endDate.toISOString()}`
             );
             const salesResponse = await axios.get(
-                `http://127.0.0.1:8000/sales/total-amount?start_date=${startDate.toISOString()}&end_date=${endDate.toISOString()}`
+                `https://suma-latex-be.onrender.com/sales/total-amount?start_date=${startDate.toISOString()}&end_date=${endDate.toISOString()}`
             );
             const expenseResponse = await axios.get(
-                `http://127.0.0.1:8000/expense/total-amount?start_date=${startDate.toISOString()}&end_date=${endDate.toISOString()}`
+                `https://suma-latex-be.onrender.com/expense/total-amount?start_date=${startDate.toISOString()}&end_date=${endDate.toISOString()}`
             );
 
             // Data processing

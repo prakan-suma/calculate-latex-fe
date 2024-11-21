@@ -18,7 +18,7 @@ function App() {
   useEffect(() => {
     const checkBackendConnection = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/health');
+        const response = await fetch('https://suma-latex-be.onrender.com/health');
         if (response.ok) {
           setLoading(false);  // เปลี่ยนสถานะเมื่อเชื่อมต่อได้
         } else {
