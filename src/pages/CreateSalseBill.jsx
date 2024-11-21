@@ -90,7 +90,7 @@ function CreateSalesBill() {
 
         showLoading();
         try {
-            const response = await fetch(`http://localhost:8000/sales`, {
+            const response = await fetch(`https://suma-latex-be.onrender.com/sales`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
