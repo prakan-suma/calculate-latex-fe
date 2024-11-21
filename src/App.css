@@ -4,13 +4,30 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  color: rgb(60, 73, 77);
   font-family: 'Sarabun', 'TH Sarabun New', 'Angsana New', Arial, sans-serif;
-
 }
 
 body{
-  background-color: rgb(251, 255, 255);
+  background-color: rgb(241 245 249);
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+}
+
+
+@keyframes spin {
+  0% {
+      transform: rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg);
+  }
 }
 
 @media print {
