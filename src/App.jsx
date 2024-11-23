@@ -50,7 +50,7 @@ function App() {
   }
 
   if (error) {
-    return <div>{error}</div>; // แสดงข้อความ error ถ้าเชื่อมต่อไม่ได้
+    return <div>{error}</div>;
   }
 
   return (

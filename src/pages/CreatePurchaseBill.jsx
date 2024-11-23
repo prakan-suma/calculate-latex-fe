@@ -3,10 +3,14 @@ import { LuPrinter } from 'react-icons/lu';
 import { CiSaveDown2 } from "react-icons/ci";
 import AlertPopup from '../components/AlertPopup';
 import { useLoading } from '../contexts/LoadingContext';
+import DatePicker from 'react-datepicker';
+import { th } from 'date-fns/locale';
+import "react-datepicker/dist/react-datepicker.css";
 
 function CreatePurchaseBill() {
     // loading 
     const { showLoading, hideLoading } = useLoading();
+    const [selectedDate, setSelectedDate] = useState(new Date());
 
     const [name, setName] = useState('');
     const [rubberWeight, setRubberWeight] = useState('');
@@ -86,9 +90,14 @@ function CreatePurchaseBill() {
         }
     }, [rubberWeight, tankWeight, percentage, buyingPrice]);
 
+    // date picker 
     useEffect(() => {
         const date = new Date();
-        const formattedDate = date.toISOString().split('T')[0];
+        const formattedDate = date.toLocaleDateString('th-TH', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
         setCurrentDate(formattedDate);
     }, []);
 
@@ -107,7 +116,7 @@ function CreatePurchaseBill() {
                     : totalAmount;
 
         const data = {
-            date: currentDate,
+            date: selectedDate.toISOString().split('T')[0],
             name,
             rubberWeight,
             tankWeight,
@@ -120,7 +129,6 @@ function CreatePurchaseBill() {
             noteAmount,
         };
 
-        console.log(data)
         showLoading();
 
         try {
@@ -266,6 +274,22 @@ function CreatePurchaseBill() {
                 <h3 className="text-lg font-semibold mt-4">SUMA LATEX</h3>
                 <p>ใบเสร็จรับเงิน</p>
                 <p>วันที่: {currentDate}</p>
+            </div>
+
+            {/* date picker */}
+            <div className="my-4">
+                {/* ช่องเลือกวันที่ */}
+                <div className="flex justify-between items-center">
+                    <label>เลือกวันที่:</label>
+                    <DatePicker
+                        selected={selectedDate}
+                        onChange={(date) => setSelectedDate(date)}
+                        dateFormat="yyyy-MM-dd"
+                        locale={th}
+                        portalId="root-portal"
+                        className="p-1 rounded-md border text-right"
+                    />
+                </div>
             </div>
 
             <div className="space-y-4">
