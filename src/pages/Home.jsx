@@ -110,7 +110,7 @@ const Home = () => {
 
     useEffect(() => {
         const now = new Date();
-        const defaultStartDate = new Date(now.setDate(now.getDate() - 15));
+        const defaultStartDate = new Date(now.setMonth(now.getMonth() - 3));
         setStartDate(defaultStartDate);
         setEndDate(new Date());
     }, []);

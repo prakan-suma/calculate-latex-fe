@@ -20,7 +20,7 @@ function App() {
       try {
         const response = await fetch('https://suma-latex-be.onrender.com/health');
         if (response.ok) {
-          setLoading(false);  // เปลี่ยนสถานะเมื่อเชื่อมต่อได้
+          setLoading(false); 
         } else {
           throw new Error('Failed to connect');
         }
